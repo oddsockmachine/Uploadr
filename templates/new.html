@@ -1,26 +1,50 @@
 {% extends "layout.html" %}
 {% block body %}
+<script src="/static/js/dropzone.js"></script>
+<div id="dropzone"><form action="http://www.torrentplease.com/dropzone.php" class="dropzone dz-clickable" id="demo-upload">
+<div class="dz-default dz-message"><span>Drop files here to upload</span></div></form></div>
   <form action="" method=post class="form-horizontal">
-    <h2>Create New Todo</h2>
+    <h2>New upload</h2>
     <div class="control-group">
         <div class="controls">
           <input type="text" id="title" name="title" class="input-xlarge"
-            placeholder="Please give title to todo item" value="{{ request.form.title }}"
+            placeholder="Please give uploaded file a title" value="{{ request.form.title }}"
             required>
         </div>
     </div>
 
     <div class="control-group">
         <div class="controls">
-          <textarea name="text" rows=10 class="input-xlarge" placeholder="describle the todo item" required>{{ request.form.text }}</textarea>
+          <textarea name="text" rows=10 class="input-xlarge" placeholder="Describe the uploaded item" required>{{ request.form.text }}</textarea>
         </div>
     </div>
+    <div class="control-group">
+        <div class="controls">
+          <select>
+            <option value="option1">option1</option>
+            <option value="option2">option2</option>
+            <option value="option3">option3</option>
+            <option value="option4">option4</option>
+          </select>
+        </div>
+      </div>
+
 
     <div class="control-group">
         <div class="controls">
-          <button type="submit" class="btn btn-success">Create Todo</button>
+          <input id="image-file" type="file" />
+        </div>
+      </div>
+
+    <div class="control-group">
+        <div class="controls">
+          <button type="submit" class="btn btn-success">Upload file</button>
           <a href="{{ url_for('index') }}">Back to list</a>
         </div>
     </div>
   </form>
+  <form enctype="multipart/form-data" action="/upload/image" method="post">
+    <input id="image-file" type="file" />
+</form>
+
 {% endblock %}

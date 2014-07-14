@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
   <form action="" method=post class="form-horizontal">
-    <h2>Create New upload</h2>
+    <h2>Edit upload details</h2>
     <div class="control-group">
         <div class="controls">
           <input type="text" id="title" name="title" class="input-xlarge"
@@ -16,6 +16,7 @@
         </div>
     </div>
 
+    <!-- TODO - REMOVE -->
     <div class="control-group">
         <div class="controls">
           <input type=checkbox name=done.{{ upload.id }}{{ " checked" if upload.done }}>
