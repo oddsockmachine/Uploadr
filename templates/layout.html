@@ -26,7 +26,7 @@ body {
 					<ul class="nav">
 						<li class="active"><a href="/">Home</a></li>
 						{% if g.user.is_authenticated()%}
-							<li><a href="/new">New Todo</a></li>
+							<li><a href="/new">New Upload</a></li>
 							<li><a href="{{ url_for('logout') }}">Logout</a></li>
 						{% endif %}
 						{% if not g.user.is_authenticated()%}

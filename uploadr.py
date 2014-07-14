@@ -8,7 +8,7 @@ from os.path import isfile
 
 
 app = Flask(__name__)
-app.config.from_pyfile('todoapp.cfg')
+app.config.from_pyfile('uploadr.cfg')
 db = SQLAlchemy(app)
 
 
@@ -24,17 +24,14 @@ class User(db.Model):
     password = db.Column('password' , db.String(250))
     email = db.Column('email',db.String(50),unique=True , index=True)
     registered_on = db.Column('registered_on' , db.DateTime)
-    todos = db.relationship('Todo' , backref='user',lazy='dynamic')
+    uploads = db.relationship('Upload' , backref='user',lazy='dynamic')
 
     def __init__(self , username ,password , email):
         self.username = username
         self.set_password(password)
         self.email = email
         self.registered_on = datetime.utcnow()
-        print self.username
-        print self.password
-        print self.email
-        print self.registered_on
+
 
     def set_password(self , password):
         self.password = generate_password_hash(password)
@@ -57,9 +54,9 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % (self.username)
 
-class Todo(db.Model):
-    __tablename__ = 'todos'
-    id = db.Column('todo_id', db.Integer, primary_key=True)
+class Upload(db.Model):
+    __tablename__ = 'uploads'
+    id = db.Column('upload_id', db.Integer, primary_key=True)
     title = db.Column(db.String(60))
     text = db.Column(db.String)
     done = db.Column(db.Boolean)
@@ -81,7 +78,7 @@ if not isfile('app.db'):
 @login_required
 def index():
     return render_template('index.html',
-        todos=Todo.query.filter_by(user_id = g.user.id).order_by(Todo.pub_date.desc()).all()
+        uploads=Upload.query.filter_by(user_id = g.user.id).order_by(Upload.pub_date.desc()).all()
     )
 
 
@@ -94,28 +91,28 @@ def new():
         elif not request.form['text']:
             flash('Text is required', 'error')
         else:
-            todo = Todo(request.form['title'], request.form['text'])
-            todo.user = g.user
-            db.session.add(todo)
+            upload = Upload(request.form['title'], request.form['text'])
+            upload.user = g.user
+            db.session.add(upload)
             db.session.commit()
-            flash('Todo item was successfully created')
+            flash('Upload item was successfully created')
             return redirect(url_for('index'))
     return render_template('new.html')
 
-@app.route('/todos/<int:todo_id>', methods = ['GET' , 'POST'])
+@app.route('/uploads/<int:upload_id>', methods = ['GET' , 'POST'])
 @login_required
-def show_or_update(todo_id):
-    todo_item = Todo.query.get(todo_id)
+def show_or_update(upload_id):
+    upload_item = Upload.query.get(upload_id)
     if request.method == 'GET':
-        return render_template('view.html',todo=todo_item)
-    if todo_item.user.id == g.user.id:
-        todo_item.title = request.form['title']
-        todo_item.text  = request.form['text']
-        todo_item.done  = ('done.%d' % todo_id) in request.form
+        return render_template('view.html',upload=upload_item)
+    if upload_item.user.id == g.user.id:
+        upload_item.title = request.form['title']
+        upload_item.text  = request.form['text']
+        upload_item.done  = ('done.%d' % upload_id) in request.form
         db.session.commit()
         return redirect(url_for('index'))
-    flash('You are not authorized to edit this todo item','error')
-    return redirect(url_for('show_or_update',todo_id=todo_id))
+    flash('You are not authorized to edit this upload item','error')
+    return redirect(url_for('show_or_update',upload_id=upload_id))
 
 
 @app.route('/register' , methods=['GET','POST'])
