@@ -4,20 +4,22 @@
     <h2>All Uploads</h2>
     <table class="table table-hover">
       <tr>
-        <th>#
-        <th>Title
-        <th>Date
-        <th>Text
+        <th>#</th>
+        <th>Title</th>
+        <th>Date</th>
+        <th>Progress</th>
+        <th>Exceptions Count</th>
       {%- for upload in uploads %}
-      <tr class={{ "success" if upload.done }}>
-        <td><a href="/uploads/{{ upload.id }}">{{ upload.id }}</a>
-        <td style={{ "text-decoration:line-through" if upload.done }}>{{ upload.title }}
-        <td>{{ upload.pub_date.strftime('%Y-%m-%d %H:%M') }}
-        <td>{{ upload.text }}</td>
+      <tr>
+        <td><a href="/uploads/{{ upload.id }}">{{ upload.id }}</a></td>
+        <td><a href="{{ url_for('static', filename='user_uploads') }}/{{upload.title}}">{{upload.title}}</a></td>
+        <td>{{ upload.pub_date.strftime('%Y-%m-%d %H:%M') }}</td>
+        <td>Success</td>
+        <td>0</td>
       {%- endfor %}
     </table>
     <p>
-      <a href="{{ url_for('new') }}" class="btn btn-large btn-primary">New Upload</a>
+      <a href="{{ url_for('drop') }}" class="btn btn-large btn-primary">New Upload</a>
 
 
 </div>

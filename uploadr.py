@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Flask,session, request, flash, url_for, redirect, render_template, abort ,g
+from flask import Flask,session, request, flash, url_for, redirect, render_template, abort ,g, send_from_directory
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from flask.ext.login import login_user , logout_user , current_user , login_required
@@ -90,6 +90,14 @@ def index():
 def drop():
     return render_template('drop.html')
 
+@app.route('/file/<path:filename>')
+@login_required
+def send_file(filename):
+    print filename
+    print send_from_directory('/static/user_uploads', filename)
+    print "!"
+    return
+
 
 @app.route('/new', methods=['GET', 'POST'])
 @login_required
@@ -162,6 +170,7 @@ def logout():
 
  
 @app.route('/upload_file',methods=['POST'])
+@login_required
 def upload_file():
     print "Starting file reception"
     _file = request.files['file']
@@ -169,7 +178,11 @@ def upload_file():
 #     filename = secure_filename(_file.filename)  # Not securing filenames, since user needs file names to be human-readable
     print pjoin(app.config['UPLOAD_FOLDER'], _file.filename)
     _file.save(pjoin(app.config['UPLOAD_FOLDER'], _file.filename))
-    return "ok"
+    upload = Upload(_file.filename, "example file")
+    upload.user = g.user
+    db.session.add(upload)
+    db.session.commit()
+    return "done"
 
   
   

@@ -26,8 +26,9 @@ body {
 					<ul class="nav">
 						<li class="active"><a href="/">Home</a></li>
 						{% if g.user.is_authenticated()%}
-							<li><a href="/new">New Upload</a></li>
+							<li><a href="{{url_for('drop') }}">New Upload</a></li>
 							<li><a href="{{ url_for('logout') }}">Logout</a></li>
+              <li><a href="{{url_for('index') }}">{{g.user.username}}</a></li>
 						{% endif %}
 						{% if not g.user.is_authenticated()%}
 							<li><a href="{{ url_for('login') }}">Login</a></li>
@@ -54,8 +55,6 @@ body {
 	{% endwith %}
 
 	{% block body %}{% endblock %}
-	<hr>
 	<footer id="footer">
-    --- Demo ---
 	</footer>
 </div>
