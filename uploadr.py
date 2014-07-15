@@ -4,7 +4,9 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from flask.ext.login import login_user , logout_user , current_user , login_required
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 from os.path import isfile
+from os.path import join as pjoin
 
 
 app = Flask(__name__)
@@ -158,6 +160,19 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
+ 
+@app.route('/upload_file',methods=['POST'])
+def upload_file():
+    print "Starting file reception"
+    _file = request.files['file']
+    print _file
+#     filename = secure_filename(_file.filename)  # Not securing filenames, since user needs file names to be human-readable
+    print pjoin(app.config['UPLOAD_FOLDER'], _file.filename)
+    _file.save(pjoin(app.config['UPLOAD_FOLDER'], _file.filename))
+    return "ok"
+
+  
+  
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(int(id))
@@ -166,5 +181,8 @@ def load_user(id):
 def before_request():
     g.user = current_user
 
+    
+
+    
 if __name__ == '__main__':
     app.run("0.0.0.0", 4000)
