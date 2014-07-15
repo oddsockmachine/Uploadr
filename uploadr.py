@@ -90,13 +90,6 @@ def index():
 def drop():
     return render_template('drop.html')
 
-@app.route('/file/<path:filename>')
-@login_required
-def send_file(filename):
-    print filename
-    print send_from_directory('/static/user_uploads', filename)
-    print "!"
-    return
 
 
 @app.route('/new', methods=['GET', 'POST'])

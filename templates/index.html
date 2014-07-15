@@ -1,26 +1,243 @@
 {% extends "layout.html" %}
 {% block body %}
 <div id="main" class="container">
-    <h2>All Uploads</h2>
-    <table class="table table-hover">
-      <tr>
-        <th>#</th>
-        <th>Title</th>
-        <th>Date</th>
-        <th>Progress</th>
-        <th>Exceptions Count</th>
-      {%- for upload in uploads %}
-      <tr>
-        <td><a href="/uploads/{{ upload.id }}">{{ upload.id }}</a></td>
-        <td><a href="{{ url_for('static', filename='user_uploads') }}/{{upload.title}}">{{upload.title}}</a></td>
-        <td>{{ upload.pub_date.strftime('%Y-%m-%d %H:%M') }}</td>
-        <td>Success</td>
-        <td>0</td>
-      {%- endfor %}
-    </table>
-    <p>
-      <a href="{{ url_for('drop') }}" class="btn btn-large btn-primary">New Upload</a>
 
 
+<div class="tabbable"> <!-- Only required for left/right tabs -->
+
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a href="#tab1" data-toggle="tab">
+                <h2><i class="icon-list-alt"> </i>View Files</h2></a></li>
+        <li>
+            <a href="#tab2" data-toggle="tab">
+                <h2><i class="icon-plus"> </i>Upload Files</h2></a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane active" id="tab1">
+
+                  <h2>All Uploads</h2>
+                  <table class="table table-hover">
+                    <tr>
+                      <th>#</th>
+                      <th>Title</th>
+                      <th>Date</th>
+                      <th>Progress</th>
+                      <th>Exceptions Count</th>
+                    {%- for upload in uploads %}
+                    <tr>
+                      <td><a href="/uploads/{{ upload.id }}">{{ upload.id }}</a></td>
+                      <td><a href="{{ url_for('static', filename='user_uploads') }}/{{upload.title}}">{{upload.title}}</a></td>
+                      <td>{{ upload.pub_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                      <td>Success</td>
+                      <td>0</td>
+                    {%- endfor %}
+                  </table>
+                  <p>
+<!--                     <a href="{{ url_for('drop') }}" class="btn btn-large btn-primary">New Upload</a> -->
+
+        </div>
+
+        <div class="tab-pane" id="tab2">
+            
+          
+ <style>
+
+    #actions {
+      margin: 5em 0;
+    }
+
+
+    /* Mimic table appearance */
+    div.table {
+      display: table;
+    }
+    div.table .file-row {
+      display: table-row;
+    }
+    div.table .file-row > div {
+      display: table-cell;
+      vertical-align: top;
+      border-top: 1px solid #ddd;
+      padding: 8px;
+    }
+    div.table .file-row:nth-child(odd) {
+      background: #f9f9f9;
+    }
+
+
+
+    /* The total progress gets shown by event listeners */
+    #total-progress {
+      opacity: 0;
+      transition: opacity 0.3s linear;
+    }
+
+    /* Hide the progress bar when finished */
+    #previews .file-row.dz-success .progress {
+      opacity: 0;
+      transition: opacity 0.3s linear;
+    }
+  
+
+
+
+  </style>
+
+
+          
+          
+    <div id="actions" class="row">
+
+      <div class="col-lg-7">
+        <!-- The fileinput-button span is used to style the file input field as button -->
+        <span class="btn btn-success fileinput-button">
+            <i class="glyphicon glyphicon-plus"></i>
+            <span>Add files...</span>
+        </span>
+        <button type="submit" class="btn btn-primary start">
+            <i class="glyphicon glyphicon-upload"></i>
+            <span>Start upload</span>
+        </button>
+        <button type="reset" class="btn btn-warning cancel">
+            <i class="glyphicon glyphicon-ban-circle"></i>
+            <span>Cancel upload</span>
+        </button>
+      </div>
+
+      <div class="col-lg-5">
+        <!-- The global file processing state -->
+        <span class="fileupload-process">
+          <div id="total-progress" class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
+          </div>
+        </span>
+      </div>
+
+    </div>
+
+
+
+
+
+
+
+
+    <div class="table table-striped" class="files" id="previews">
+
+      <div id="template" class="file-row">
+        <!-- This is used as the file preview template -->
+        <div>
+            <span class="preview"><img data-dz-thumbnail /></span>
+        </div>
+        <div>
+            <p class="name" data-dz-name></p>
+            <strong class="error text-danger" data-dz-errormessage></strong>
+        </div>
+        <div>
+            <p class="size" data-dz-size></p>
+            <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
+            </div>
+        </div>
+        <div>
+          <button class="btn btn-primary start">
+              <i class="glyphicon glyphicon-upload"></i>
+              <span>Start</span>
+          </button>
+          
+          <button data-dz-remove class="btn btn-danger delete">
+            <i class="glyphicon glyphicon-trash"></i>
+            <span>Remove</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+          
+          
+        </div>
+    </div>
 </div>
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          <script src="/static/js/build/build.js?v=6"></script>
+          <script>
+            var Dropzone = require("enyo-dropzone");
+            Dropzone.autoDiscover = false;
+          </script>
+
+
+
+    <script>
+      // Get the template HTML and remove it from the doument
+      var previewNode = document.querySelector("#template");
+      previewNode.id = "";
+      var previewTemplate = previewNode.parentNode.innerHTML;
+      previewNode.parentNode.removeChild(previewNode);
+
+      var myDropzone = new Dropzone(document.body, { // Make the whole body a dropzone
+        url: "{{url_for('upload_file')}}", // Set the url
+        thumbnailWidth: 80,
+        thumbnailHeight: 80,
+        parallelUploads: 20,
+        previewTemplate: previewTemplate,
+        autoQueue: false, // Make sure the files aren't queued until manually added
+        previewsContainer: "#previews", // Define the container to display the previews
+        clickable: ".fileinput-button" // Define the element that should be used as click trigger to select files.
+      });
+
+      myDropzone.on("addedfile", function(file) {
+        // Hookup the start button
+        file.previewElement.querySelector(".start").onclick = function() { myDropzone.enqueueFile(file); };
+      });
+
+      // Update the total progress bar
+      myDropzone.on("totaluploadprogress", function(progress) {
+        document.querySelector("#total-progress .progress-bar").style.width = progress + "%";
+      });
+
+      myDropzone.on("sending", function(file) {
+        console.log("sending")
+        // Show the total progress bar when upload starts
+        document.querySelector("#total-progress").style.opacity = "1";
+        // And disable the start button
+        file.previewElement.querySelector(".start").setAttribute("disabled", "disabled");
+      });
+
+      // Hide the total progress bar when nothing's uploading anymore
+      myDropzone.on("queuecomplete", function(progress) {
+        console.log("complete")
+        document.querySelector("#total-progress").style.opacity = "0";
+      });
+
+      // Setup the buttons for all transfers
+      // The "add files" button doesn't need to be setup because the config
+      // `clickable` has already been specified.
+      document.querySelector("#actions .start").onclick = function() {
+        myDropzone.enqueueFiles(myDropzone.getFilesWithStatus(Dropzone.ADDED));
+      };
+      document.querySelector("#actions .cancel").onclick = function() {
+        myDropzone.removeAllFiles(true);
+      };
+    </script>
+
+
+
 {% endblock %}
