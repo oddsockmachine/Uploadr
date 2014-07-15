@@ -81,6 +81,13 @@ def index():
         uploads=Upload.query.filter_by(user_id = g.user.id).order_by(Upload.pub_date.desc()).all()
     )
 
+  
+  
+@app.route('/drop')
+@login_required
+def drop():
+    return render_template('drop.html')
+
 
 @app.route('/new', methods=['GET', 'POST'])
 @login_required
@@ -160,4 +167,4 @@ def before_request():
     g.user = current_user
 
 if __name__ == '__main__':
-    app.run()
+    app.run("0.0.0.0", 4000)
