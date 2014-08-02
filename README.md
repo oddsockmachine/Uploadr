@@ -1,0 +1,1 @@
+Client needed an app that would allow them to upload files and keep track of their states during manual processing. This is the barebones (ie customer-specific details omitted) version of that app.
